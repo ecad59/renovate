@@ -1,0 +1,1 @@
+- source : https://gastaud.io/en/article/gitlab-renovatebot/

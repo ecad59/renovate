@@ -1,0 +1,20 @@
+image: renovate/renovate:31
+
+variables:
+  RENOVATE_BASE_DIR: $CI_PROJECT_DIR/renovate
+  RENOVATE_OPTIMIZE_FOR_DISABLED: 'true'
+  RENOVATE_REPOSITORY_CACHE: 'true'
+  LOG_LEVEL: debug
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}-renovate
+  paths:
+    - $CI_PROJECT_DIR/renovate
+
+renovate:
+  stage: deploy
+  resource_group: production
+  script:
+    - renovate $RENOVATE_EXTRA_FLAGS
+  only:
+    - main
