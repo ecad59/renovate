@@ -1,0 +1,48 @@
+library identifier: 'my-jenkins-library', changelog: false _ // see ecad59/jenkins-library
+
+pipeline {
+    agent { label 'renovate'}
+    parameters{
+        choice(
+            name: 'scan_type', 
+            choices: ['ecad59-all-repositories','ecad59-single-repository'],
+        )
+
+        choice(
+            name: 'custom_repository_name'),
+            choices: [
+                'ecad59/ansible',
+                'ecad59/docker',
+                'ecad59/github-library',
+                'ecad59/gitlab-library',
+                'ecad59/renovate',
+                'ecad59/terraform'
+            ],
+            description: 'Please select a repository'
+    }
+
+    triggers {
+        // parameterizedCron is a jenkins plugin, do not forget to install it.
+        parameterizedCron('''
+        0 4 * * 0 %Scan_Type='ecad59-all-repositories'
+        ''')
+        // At 04:00 on Sunday.
+    }
+
+    stages {
+        stage{
+            agent { label 'renovate'}
+            steps {
+                checkout scm
+                script {
+                    customStepRenovate script: this, scan_type: params.scan_type, custom_repository_name: params.custom_repository_name
+                }
+            }
+            post {
+                always  { echo postActionRenovate script: this, buildStatus: always }
+                success { echo postActionRenovate script: this, buildStatus: success }
+                failure { error postActionRenovate script: this, buildStatus: failure }
+            }
+        }
+    }
+}

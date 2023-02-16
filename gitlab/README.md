@@ -1,1 +1,1 @@
-- source : https://gastaud.io/en/article/gitlab-renovatebot/
+source : https://gastaud.io/en/article/gitlab-renovatebot/
